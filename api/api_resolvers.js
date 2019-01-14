@@ -15,6 +15,7 @@ const resolvers = {
   Query: {
     books:
       (parent, args, context) => sampleData, // eslint-disable-line no-unused-vars
+    employee: require('./employee_queries').employee,
   },
 };
 module.exports = resolvers;
