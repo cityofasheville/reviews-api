@@ -16,7 +16,7 @@
     "axios": "^0.18.0",
     "coa-node-logging": "^2.0.4",
     "coa-web-cache": "^1.2.2",
-    "coa-web-login": "^2.2.1",
+    "coa-web-login": "^2.2.2",
     "connect-pg-simple": "^5.0.0",
     "connect-redis": "^3.4.0",
     "cors": "^2.8.5",

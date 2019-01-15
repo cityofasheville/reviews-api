@@ -1,31 +1,7 @@
 const getDbConnection = require('../common/db');
-const { isReviewable, notReviewableReason } = require('./reviewable');
-
-const loadEmployee = (e) => {
-  const employee = {
-    id: e.id,
-    active: e.active,
-    ft_status: e.ft_status,
-    name: e.name,
-    email: e.email,
-    position: e.position,
-    department: e.department,
-    department_id: e.department_id,
-    division: e.division,
-    division_id: e.division_id,
-    current_review: null,
-    last_reviewed: null,
-    reviewable: isReviewable(e),
-    review_by: null,
-    not_reviewable_reason: notReviewableReason(e),
-    supervisor_id: e.supervisor_id,
-    supervisor_name: e.supervisor_name,
-    supervisor_email: e.supervisor_email,
-    employees: null,
-    reviews: null,
-  };
-  return employee;
-};
+const logger = require('../common/logger');
+const operationIsAllowed = require('./utilities/operation_is_allowed');
+const { loadEmployeeFromCache, getEmployee } = require('./utilities/employees_info');
 
 const employeesReviewStatusQuery = `
   SELECT employee_id,
@@ -37,31 +13,45 @@ const employeesReviewStatusQuery = `
 
 const employee = (obj, args, context) => {
   const conn = getDbConnection('reviews');
+  const whConn = getDbConnection('mds');
+  console.log('Try here ' + args.id + ' with session ' + context.sessionId);
   if (Object.prototype.hasOwnProperty.call(args, 'id')) {
-    // return operationIsAllowed(args.id, context)
-    // .then(isAllowed => {
-    //   if (isAllowed) return getEmployee(args.id, conn, context.whPool, context.logger);
-    //   throw new Error('Employee query not allowed');
-    // });
-    return Promise.resolve(null);
+    console.log('x1');
+    return context.cache.get(context.sessionId)
+      .then((cData) => {
+        console.log('x2');
+        const user = (cData) ? cData.user : {};
+        console.log(`cData: ${JSON.stringify(cData)}`);
+        console.log(`USER: ${JSON.stringify(user)}`);
+        if (cData && cData.user && user.id) {
+          console.log('x3');
+          return operationIsAllowed(args.id, user.id, user.superuser)
+            .then((isAllowed) => {
+              if (isAllowed) return getEmployee(args.id, conn, whConn, logger);
+              throw new Error('Employee query not allowed');
+            });
+        }
+        console.log('x4');
+        return Promise.resolve(false);
+      });
   }
   if (context.sessionId) {
     return context.cache.get(context.sessionId)
       .then((cData) => {
+        // console.log(JSON.stringify(cData));
         const user = (cData) ? cData.user : {};
         if (cData && cData.user && cData.user.id) {
-          console.log(`Employee id is ${cData.user.id}`);
-          const employee = loadEmployee(cData.user);
+          const emp = loadEmployeeFromCache(cData.user);
           return conn.query(employeesReviewStatusQuery, [[user.id]])
             .then((res) => {
               if (res.rows.length === 0) {
-                return Object.assign({}, employee, {
+                return Object.assign({}, emp, {
                   current_review: null,
                   last_reviewed: null,
                 });
               }
               const r = res.rows[0];
-              return Object.assign({}, employee, {
+              return Object.assign({}, emp, {
                 current_review: r.current_review,
                 last_reviewed: (r.last_reviewed === null) ? null : new Date(r.last_reviewed).toISOString(),
               });
@@ -76,13 +66,6 @@ const employee = (obj, args, context) => {
   }
 
   return Promise.resolve(null);
-
-  // if (context.email !== null) {
-  //   if (context.employee_id !== null) {
-  //     return getEmployee(context.employee_id, conn, context.whPool, context.logger);
-  //   }
-  // }
-  // throw new Error('In employee query - employee_id not set');
 };
 
 module.exports = {

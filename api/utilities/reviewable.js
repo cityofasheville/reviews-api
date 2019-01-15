@@ -1,21 +1,21 @@
 
 const reviewableTypes = ['CA', 'FT', 'IN', 'PB', 'PN'];
-const isReviewable = (e) => {
+const isReviewable = (e, em) => {
   return (
     e.active === 'A'
-    && e.email !== null && e.email !== ''
-    && e.email.trim().toLowerCase().endsWith('ashevillenc.gov')
+    && e[em] !== null && e[em] !== ''
+    && e[em].trim().toLowerCase().endsWith('ashevillenc.gov')
     && reviewableTypes.includes(e.ft_status)
   );
 };
 
-const notReviewableReason = (e) => {
+const notReviewableReason = (e, em) => {
   let reason = null;
-  if (!isReviewable(e)) {
+  if (!isReviewable(e, em)) {
     if (e.active !== 'A') reason = 'Inactive';
     else if (!reviewableTypes.includes(e.ft_status)) reason = 'Non-included employee type';
     else if (e.position === null || e.position === '') reason = 'No position';
-    else if (e.email === null || !e.email.trim().toLowerCase().endsWith('ashevillenc.gov')) reason = 'City of Asheville email required';
+    else if (e[em] === null || !e[em].trim().toLowerCase().endsWith('ashevillenc.gov')) reason = 'City of Asheville email required';
     else reason = 'Employee not registered for Employee Check-in';
   }
   return reason;
