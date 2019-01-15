@@ -59,7 +59,6 @@ type Response {
 
 extend type Query {
   "This is documentation"
-  books: [Book]
   employee ( id: Int ): Employee
   review ( id: Int, employee_id: Int ): Review
 }

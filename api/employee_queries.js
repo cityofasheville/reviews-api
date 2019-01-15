@@ -1,7 +1,8 @@
 const getDbConnection = require('../common/db');
 const logger = require('../common/logger');
 const operationIsAllowed = require('./utilities/operation_is_allowed');
-const { loadEmployeeFromCache, getEmployee } = require('./utilities/employees_info');
+const { loadEmployeeFromCache, getEmployee, getSubordinates } = require('./utilities/employees_info');
+const getCachedUser = require('./utilities/get_cached_user');
 
 const employeesReviewStatusQuery = `
   SELECT employee_id,
@@ -14,34 +15,24 @@ const employeesReviewStatusQuery = `
 const employee = (obj, args, context) => {
   const conn = getDbConnection('reviews');
   const whConn = getDbConnection('mds');
-  console.log('Try here ' + args.id + ' with session ' + context.sessionId);
   if (Object.prototype.hasOwnProperty.call(args, 'id')) {
-    console.log('x1');
-    return context.cache.get(context.sessionId)
-      .then((cData) => {
-        console.log('x2');
-        const user = (cData) ? cData.user : {};
-        console.log(`cData: ${JSON.stringify(cData)}`);
-        console.log(`USER: ${JSON.stringify(user)}`);
-        if (cData && cData.user && user.id) {
-          console.log('x3');
+    return getCachedUser(context)
+      .then((user) => {
+        if (user.id) {
           return operationIsAllowed(args.id, user.id, user.superuser)
             .then((isAllowed) => {
               if (isAllowed) return getEmployee(args.id, conn, whConn, logger);
               throw new Error('Employee query not allowed');
             });
         }
-        console.log('x4');
         return Promise.resolve(false);
       });
   }
   if (context.sessionId) {
-    return context.cache.get(context.sessionId)
-      .then((cData) => {
-        // console.log(JSON.stringify(cData));
-        const user = (cData) ? cData.user : {};
-        if (cData && cData.user && cData.user.id) {
-          const emp = loadEmployeeFromCache(cData.user);
+    return getCachedUser(context)
+      .then((user) => {
+        if (user.id) {
+          const emp = loadEmployeeFromCache(user);
           return conn.query(employeesReviewStatusQuery, [[user.id]])
             .then((res) => {
               if (res.rows.length === 0) {
@@ -68,7 +59,25 @@ const employee = (obj, args, context) => {
   return Promise.resolve(null);
 };
 
+const employees = (obj, args, context) => {
+  const conn = getDbConnection('reviews');
+  const whConn = getDbConnection('mds');
+  return getCachedUser(context)
+    .then((user) => {
+      if (user.id) {
+        return operationIsAllowed(obj.id, user.id, user.superuser)
+          .then((isAllowed) => {
+            if (isAllowed) {
+              return getSubordinates(obj.id, conn, whConn, logger);
+            }
+            throw new Error('Employees query not allowed');
+          });
+      }
+      return Promise.resolve([]);
+    });
+};
+
 module.exports = {
   employee,
-  // employees,
+  employees,
 };

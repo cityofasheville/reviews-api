@@ -103,9 +103,11 @@ const getSubordinates = (id, pool, whPool, logger) => {
             e.current_review = r.current_review;
             e.last_reviewed = (r.last_reviewed === null) ? null : new Date(r.last_reviewed).toISOString();
           });
-          return eIds.map((eId) => {
+          const final = eIds.map((eId) => {
             return employeesById[eId];
           });
+          console.log(JSON.stringify(final));
+          return final;
         });
     });
 };

@@ -1,21 +1,14 @@
-const sampleData = [
-  {
-    title: 'Harry Potter and the Chamber of Secrets',
-    author: 'J.K. Rowling',
-    secret: 'Hagrid',
-  },
-  {
-    title: 'Jurassic Park',
-    author: 'Michael Crichton',
-    secret: 'raptor',
-  },
-];
+const { employee, employees } = require('./employee_queries');
+const { review, reviews } = require('./review_queries');
 
 const resolvers = {
   Query: {
-    books:
-      (parent, args, context) => sampleData, // eslint-disable-line no-unused-vars
-    employee: require('./employee_queries').employee,
+    employee,
+    review,
+  },
+  Employee: {
+    employees,
+    reviews,
   },
 };
 module.exports = resolvers;
