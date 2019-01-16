@@ -1,9 +1,4 @@
 const schema = `
-type Book {
-  title: String
-  author: String
-  secret: String
-}
 
 type Employee {
   id: Int!
@@ -43,6 +38,14 @@ type Review {
   responses: [Response]
 }
 
+input ReviewInput {
+  status: String!
+  periodStart: String
+  periodEnd: String!
+  questions: [QuestionInput]!
+  responses: [ResponseInput]!
+}
+
 type Question {
   id: Int!
   type: String!
@@ -51,9 +54,19 @@ type Question {
   required: Boolean
 }
 
+input QuestionInput {
+  id: Int!
+  answer: String
+}
+
 type Response {
   question_id: Int
   review_id: Int!
+  Response: String
+}
+
+input ResponseInput {
+  question_id: Int
   Response: String
 }
 
@@ -63,6 +76,9 @@ extend type Query {
   review ( id: Int, employee_id: Int ): Review
 }
 
+extend type Mutation {
+  updateReview (id: Int, review: ReviewInput!): Review
+}
+
 `;
 module.exports = schema;
-
