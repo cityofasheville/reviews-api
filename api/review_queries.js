@@ -81,7 +81,19 @@ const review = (obj, args, context) => {
     });
 };
 
+const questions = (obj, args, context) => { // eslint-disable-line no-unused-vars
+  if (obj.questions === null) throw new Error('Recursive checkin questions fetch not implemented');
+  return obj.questions;
+};
+
+const responses = (obj, args, context) => { // eslint-disable-line no-unused-vars
+  if (obj.responses === null) throw new Error('Recursive review responses fetch not implemented');
+  return obj.responses;
+};
+
 module.exports = {
   review,
   reviews,
+  questions,
+  responses,
 };

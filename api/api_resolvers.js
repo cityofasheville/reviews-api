@@ -1,5 +1,7 @@
 const { employee, employees } = require('./employee_queries');
-const { review, reviews } = require('./review_queries');
+const {
+  review, reviews, questions, responses,
+} = require('./review_queries');
 
 const resolvers = {
   Query: {
@@ -9,6 +11,10 @@ const resolvers = {
   Employee: {
     employees,
     reviews,
+  },
+  Review: {
+    questions,
+    responses,
   },
 };
 module.exports = resolvers;
