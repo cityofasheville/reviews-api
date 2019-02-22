@@ -113,7 +113,6 @@ const updateReview = (root, args, context) => {
         .then((e) => {
           employeeInfo = e;
           supervisorId = review.supervisor_id;
-
           if (supervisorChangeFlag) {
             // Supervisor has changed or we have unauthorized save
             if (user.id === employeeInfo.supervisor_id) {
@@ -125,7 +124,6 @@ const updateReview = (root, args, context) => {
               throw new Error(`Only the supervisor or employee can modify a check-in, ${user.email}`);
             }
           }
-
           // Check that the status transition is OK
           if (Object.prototype.hasOwnProperty.call(reviewInput, 'status')) {
             const t = validateStatusTransition(review, reviewInput, supervisorId, user);
@@ -179,7 +177,9 @@ const updateReview = (root, args, context) => {
 
           return Promise.all(queries);
         })
-        .then(() => getReview(args.id, conn, whConn, logger))
+        .then(() => {
+          return getReview(args.id, conn, whConn, logger);
+        })
         .then((updatedReview) => {
           if (transition === null) return Promise.resolve(updatedReview);
           // https://medium.com/@yashoda.charith10/sending-emails-using-aws-ses-nodejs-460b8cc6d0d5
@@ -188,7 +188,7 @@ const updateReview = (root, args, context) => {
           toEmail = (toId === employeeInfo.id) ? employeeInfo.email : employeeInfo.supervisor_email;
           return notify(transition, process.env.notification_email_address, toEmail)
             .then(() => Promise.resolve(updatedReview));
-        })
+        });
     })
     .catch((err) => {
       logger.error(`Error updating check-in: ${err}`);
