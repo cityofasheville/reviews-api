@@ -47,7 +47,7 @@ const review = (obj, args, context) => {
                 });
             });
         }
-        console.log('Should I be here?');
+
         // Get based on the employee ID
         let employeeId = user.id;
         let verifyAllowed = Promise.resolve(true);
@@ -64,7 +64,7 @@ const review = (obj, args, context) => {
               .then((emp) => {
                 const currentReview = emp.current_review;
                 if (currentReview === null || currentReview === 0) {
-                  return createReview(emp, conn);
+                  return createReview(emp, conn, whConn);
                 }
                 return getReview(currentReview, conn, whConn, logger)
                   .catch((err) => {

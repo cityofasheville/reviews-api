@@ -1,6 +1,7 @@
 const { getReview } = require('./reviews');
+const logger = require('../../common/logger');
 
-const createReview = (emp, conn) => {
+const createReview = (emp, conn, whConn) => {
   const templateId = 3;
   const t1 = new Date();
   const t1s = `${t1.getFullYear()}-${t1.getMonth() + 1}-${t1.getDate()}`;
@@ -15,7 +16,8 @@ const createReview = (emp, conn) => {
   `;
   return conn.query(cInsert)
     .then((result) => {
-      const reviewId = result.rows[0].review_id;
+      if (!result || result.length < 2) throw new Error('Error creating new review');
+      const reviewId = result[1].rows[0].review_id;
       const qInsert = `
         INSERT INTO reviews.questions
           (template_id, review_id, question_template_id, qt_order, qt_type, qt_question, required)
@@ -34,7 +36,7 @@ const createReview = (emp, conn) => {
             WHERE review_id = ${reviewId}
           `;
           return conn.query(rInsert)
-            .then(() => getReview(reviewId, context));
+            .then(() => getReview(reviewId, conn, whConn, logger));
         });
     })
     .catch((error) => {
