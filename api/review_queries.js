@@ -42,8 +42,12 @@ const review = (obj, args, context) => {
               return operationIsAllowed(reviewOut.supervisor_id, user.id, user.superuser)
                 .then((isAllowed) => {
                   if (isAllowed) return reviewOut;
-                  logger.error(`Check-in query not allowed for user ${user.email}`);
-                  throw new Error(`Check-in query not allowed for user ${user.email}`);
+                  return operationIsAllowed(reviewOut.employee_id, user.id, user.superuser)
+                    .then((isAllowed2) => {
+                      if (isAllowed2) return reviewOut;
+                      logger.error(`Check-in query not allowed for user ${user.email}`);
+                      throw new Error(`Check-in query not allowed for user ${user.email}`);
+                    });
                 });
             });
         }
