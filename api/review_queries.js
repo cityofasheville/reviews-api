@@ -29,6 +29,7 @@ const reviews = (obj, args, context) => {
 
 const review = (obj, args, context) => {
   const conn = getDbConnection('reviews');
+  if(conn) {console.log('Connected!')};
   const whConn = getDbConnection('mds');
 
   return getCachedUser(context)

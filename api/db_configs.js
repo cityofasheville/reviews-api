@@ -6,6 +6,6 @@ module.exports = {
     password: process.env.reviews_password,
     database: process.env.reviews_database,
     port: 5432,
-    ssl: false,
+    ssl: true,
   },
 };
