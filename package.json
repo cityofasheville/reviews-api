@@ -46,7 +46,6 @@
     "extends": "airbnb",
     "rules": {
       "linebreak-style": 0
-    "nodemon": "^1.18.9"
   },
   "eslintConfig": {
     "extends": "airbnb",
