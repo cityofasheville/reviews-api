@@ -57,7 +57,3 @@ workflows:
       - verify-deployment
           requires:
             - run
-          filter:
-            branches:
-            only: 
-              - master
