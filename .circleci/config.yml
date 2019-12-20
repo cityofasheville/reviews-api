@@ -48,13 +48,13 @@ workflows:
     jobs:
       - update-tag
           filter:
-              branches:
-                only: 
-                  - master
+            branches:
+              only: 
+                - master
   verify:
     jobs:
       - verify-deployment
           filter:
-              branches:
-                only: 
-                  - master
+            branches:
+              only: 
+                - master
