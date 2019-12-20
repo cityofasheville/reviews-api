@@ -6,13 +6,13 @@ FROM node:10
 WORKDIR /opt
 
 # Copy package.json + package-lock.json files
-COPY ../../package*.json ./
+COPY package*.json ./
 
 # Installing dependencies
 RUN npm install
 
 # Bundle app source
-COPY ../../ .
+COPY . .
 
 # Exposes port 4000
 EXPOSE 4000
