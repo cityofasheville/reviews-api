@@ -17,8 +17,15 @@ jobs:
           family: 'prodreviewsapi'
           cluster-name: 'dev_reviewsapi_ecs_cluster'
           container-image-name-updates: 'prodreviewsapi,tag=${CIRCLE_SHA1}'
-    verify-deployment:
-    steps:
+  verify-deployment:
+    docker:
+      - image: 'circleci/python:3.7.1'
+    steps:  
+      - aws-cli/install
+      - aws-cli/configure:
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+     
       - run:
           name: Get last task definition
           command: >
@@ -34,7 +41,7 @@ jobs:
           task-definition-arn: '${TASK_DEFINITION_ARN}'
   
 workflows:
-  build-mage:
+  build-image-and-push:
     jobs:
       - aws-ecr/build-and-push-image:
           account-url: ECR_ACCOUNT_URL
@@ -43,12 +50,13 @@ workflows:
           region: AWS_DEFAULT_REGION
           repo: ECR_ENDPOINT
           tag: '${CIRCLE_SHA1}'
-
-  push-image:
-    jobs:
+          filters:
+            branches:
+              only:
+                - master
       - update-tag
-         
+
+        
   verify:
     jobs:
       - verify-deployment
-       
