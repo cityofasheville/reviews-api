@@ -2,8 +2,21 @@ version: 2.1
 orbs:
   aws-ecr: circleci/aws-ecr@6.6.0
   aws-ecs: circleci/aws-ecs@1.0.4
-  
+
 jobs:
+  build_and_push_image:
+    steps:
+      - aws-ecr/build-and-push-image:
+          account-url: ECR_ACCOUNT_URL
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          region: AWS_DEFAULT_REGION
+          repo: ECR_ENDPOINT
+          tag: '${CIRCLE_SHA1}'
+      - aws-ecs/deploy-service-update:
+          family: 'prodreviewsapi'
+          cluster-name: 'dev_reviewsapi_ecs_cluster'
+          tcontainer-image-name-updates: 'prodreviewsapi,tag=${CIRCLE_SHA1}'
   verify-deployment:
     docker:
       - image: 'circleci/python:3.7.1'
@@ -13,15 +26,15 @@ jobs:
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           aws-region: AWS_DEFAULT_REGION
-     - run:
-        name: Get last task definition
-        command: >
-          TASK_DEFINITION_ARN=$(aws ecs describe-task-definition \
-              --task-definition prodreviewsapi \
-              --output text \
-              --query 'taskDefinition.taskDefinitionArn')
-          echo "export TASK_DEFINITION_ARN='${TASK_DEFINITION_ARN}'" >>
-          $BASH_ENV
+      - run:
+          name: Get last task definition
+          command: >
+            TASK_DEFINITION_ARN=$(aws ecs describe-task-definition \
+                --task-definition prodreviewsapi \
+                --output text \
+                --query 'taskDefinition.taskDefinitionArn')
+            echo "export TASK_DEFINITION_ARN='${TASK_DEFINITION_ARN}'" >>
+            $BASH_ENV
       - aws-ecs/verify-revision-is-deployed:
           family: 'prodreviewsapi'
           cluster-name: 'dev_reviewsapi_ecs_cluster'
@@ -30,18 +43,21 @@ jobs:
 workflows:
   build_and_push_image:
     jobs:
-      - checkout
       - aws-ecr/build-and-push-image:
-          account-url: ECR_ACCOUNT_URL
-          aws-access-key-id: AWS_ACCESS_KEY_ID
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          region: AWS_DEFAULT_REGION
-          repo: ECR_ENDPOINT
-          tag: '${CIRCLE_SHA1}'
       - aws-ecs/deploy-service-update:
           requires:
             - aws-ecr/build-and-push-image
+          filter:
+              branches:
+              only: 
+                - master
+  verify-deployment:
+    jobs:
+      - run
       - verify-deployment
           requires:
-            - aws-ecs/deploy-service-update
-              
+            - run
+           filter:
+              branches:
+              only: 
+                - master
