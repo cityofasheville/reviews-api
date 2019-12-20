@@ -14,7 +14,7 @@ jobs:
       - aws-cli/setup:
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-      - aws-ecs/deploy-service-update:
+      - aws-ecs/update-service:
           family: 'prodreviewsapi'
           cluster-name: 'dev_reviewsapi_ecs_cluster'
           container-image-name-updates: 'prodreviewsapi,tag=${CIRCLE_SHA1}'
