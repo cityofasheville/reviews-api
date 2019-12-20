@@ -11,7 +11,7 @@ jobs:
       - image: 'circleci/python:3.7.1'
     steps:
       - aws-cli/install
-      - aws-cli/configure:
+      - aws-cli/setup:
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
       - aws-ecs/deploy-service-update:
@@ -23,7 +23,7 @@ jobs:
       - image: 'circleci/python:3.7.1'
     steps:  
       - aws-cli/install
-      - aws-cli/configure:
+      - aws-cli/setup:
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
      
