@@ -50,8 +50,6 @@ workflows:
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           region: AWS_DEFAULT_REGION
           repo: 'coa-reviewsapi'
-          path: 'images/'
-          dockerfile: 'dockerfile'
           tag: '${CIRCLE_SHA1}'
           filters:
             branches:
