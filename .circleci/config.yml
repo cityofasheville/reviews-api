@@ -15,9 +15,9 @@ jobs:
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
       - aws-ecs/update-service:
-          family: 'prodreviewsapi'
+          family: 'prod-reviewsapi'
           cluster-name: 'dev_reviewsapi_ecs_cluster'
-          container-image-name-updates: 'container=prodreviewsapi,tag=${CIRCLE_SHA1}'
+          container-image-name-updates: 'container=reviewsapi,tag=${CIRCLE_SHA1}'
   verify-deployment:
     docker:
       - image: 'circleci/python:3.7.1'
@@ -37,7 +37,7 @@ jobs:
             echo "export TASK_DEFINITION_ARN='${TASK_DEFINITION_ARN}'" >>
             $BASH_ENV
       - aws-ecs/verify-revision-is-deployed:
-          family: 'prodreviewsapi'
+          family: 'prod-reviewsapi'
           cluster-name: 'dev_reviewsapi_ecs_cluster'
           task-definition-arn: '${TASK_DEFINITION_ARN}'
   
