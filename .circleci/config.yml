@@ -14,10 +14,7 @@ jobs:
       - aws-cli/setup:
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-      - aws-ecs/update-service:
-          family: 'prodreviewsapi'
-          cluster-name: 'dev_reviewsapi_ecs_cluster'
-          container-image-name-updates: 'container=reviewsapi,tag=${CIRCLE_SHA1}'
+      
   verify-deployment:
     docker:
       - image: 'circleci/python:3.7.1'
@@ -55,9 +52,20 @@ workflows:
             branches:
               only:
                 - master
-      - update-tag:
+      - aws-ecs/deploy-update-service:
+          family: 'prodreviewsapi'
+          cluster-name: 'dev_reviewsapi_ecs_cluster'
+          container-image-name-updates: 'container=reviewsapi,tag=${CIRCLE_SHA1}'
           requires:
             - aws-ecr/build-and-push-image
+          filters:
+            branches:
+              only:
+                - master
       - verify-deployment:
           requires:
             - update-tag
+          filters:
+            branches:
+              only:
+                - master
