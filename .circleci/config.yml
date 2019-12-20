@@ -6,15 +6,6 @@ orbs:
   
 
 jobs:
-  update-tag:
-    docker:
-      - image: 'circleci/python:3.7.1'
-    steps:
-      - aws-cli/install
-      - aws-cli/setup:
-          aws-access-key-id: AWS_ACCESS_KEY_ID
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-      
   verify-deployment:
     docker:
       - image: 'circleci/python:3.7.1'
@@ -64,7 +55,7 @@ workflows:
                 - master
       - verify-deployment:
           requires:
-            - update-tag
+            - aws-ecs/deploy-update-service
           filters:
             branches:
               only:
