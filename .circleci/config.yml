@@ -45,10 +45,10 @@ workflows:
   build-image-and-push:
     jobs:
       - aws-ecr/build-and-push-image:
-          account-url: ECR_ACCOUNT_URL
+          account-url: '${ECR_ACCOUNT_URL}'
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          region: AWS_DEFAULT_REGION
+          region: '${AWS_DEFAULT_REGION}'
           repo: 'coa-reviewsapi'
           tag: '${CIRCLE_SHA1}'
           filters:
