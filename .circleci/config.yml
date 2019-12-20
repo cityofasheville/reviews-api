@@ -49,11 +49,15 @@ workflows:
             - aws-ecr/build-and-push-image
           filter:
             branches:
-            only: 
-              - master
+              only: 
+                - master
   verify-deployment:
     jobs:
       - run
-      - verify-deployment
+      - aws-ecs/verify-revision-is-deployed
           requires:
             - run
+          filter:
+            branches:
+              only: 
+                - master
