@@ -24,7 +24,6 @@ jobs:
             echo "export TASK_DEFINITION_ARN='${TASK_DEFINITION_ARN}'" >>
             $BASH_ENV
       - aws-ecs/verify-revision-is-deployed:
-          aws-region: AWS_DEFAULT_REGION
           family: 'prod-reviewsapi'
           cluster-name: 'dev_reviewsapi_ecs_cluster'
           task-definition-arn: '${TASK_DEFINITION_ARN}'
