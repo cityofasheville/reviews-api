@@ -6,6 +6,26 @@ FROM node:10
 WORKDIR /opt
 
 # Set up environmental vars
+ARG sessionName
+ARG sessionName
+ARG sessionSecret
+ARG maxSessionDays
+ARG cache_method
+ARG region
+ARG userpoolId
+ARG appClientId
+ARG cognitoOauthUrl
+ARG mds_host
+ARG mds_user
+ARG mds_password
+ARG mds_database
+ARG reviews_host
+ARG reviews_user
+ARG reviews_password
+ARG reviews_database
+
+
+
 
 # Session Configuration
 ENV sessionName=$sessionName
