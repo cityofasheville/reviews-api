@@ -55,7 +55,9 @@ workflows:
             branches:
               only:
                 - master
-      - update-tag
-      - verify-deployment
+      - update-tag:
+          requires:
+            - aws-ecr/build-and-push-image
+      - verify-deployment:
           requires:
             - update-tag
