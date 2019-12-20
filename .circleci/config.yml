@@ -56,12 +56,6 @@ workflows:
               only:
                 - master
       - update-tag
-
-        
-  verify:
-    jobs:
       - verify-deployment
-          filters:
-            branches:
-              only:
-                - master
+          requires:
+            - update-tag
