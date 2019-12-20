@@ -43,7 +43,7 @@ workflows:
             branches:
               only:
                 - master
-      - aws-ecs/deploy-update-service:
+      - aws-ecs/deploy-service-update:
           family: 'prodreviewsapi'
           cluster-name: 'dev_reviewsapi_ecs_cluster'
           container-image-name-updates: 'container=reviewsapi,tag=${CIRCLE_SHA1}'
