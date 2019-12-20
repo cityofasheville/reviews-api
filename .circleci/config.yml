@@ -2,22 +2,10 @@ version: 2.1
 orbs:
   aws-ecr: circleci/aws-ecr@6.6.0
   aws-ecs: circleci/aws-ecs@1.0.4
+  
 
 jobs:
-  build_and_push_image:
-    steps:
-      - aws-ecr/build-and-push-image:
-          account-url: ECR_ACCOUNT_URL
-          aws-access-key-id: AWS_ACCESS_KEY_ID
-          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          region: AWS_DEFAULT_REGION
-          repo: ECR_ENDPOINT
-          tag: '${CIRCLE_SHA1}'
-      - aws-ecs/deploy-service-update:
-          family: 'prodreviewsapi'
-          cluster-name: 'dev_reviewsapi_ecs_cluster'
-          tcontainer-image-name-updates: 'prodreviewsapi,tag=${CIRCLE_SHA1}'
-  verify-deployment:
+  update-tag:
     docker:
       - image: 'circleci/python:3.7.1'
     steps:
@@ -25,7 +13,12 @@ jobs:
       - aws-cli/configure:
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
-          aws-region: AWS_DEFAULT_REGION
+      - aws-ecs/deploy-service-update:
+          family: 'prodreviewsapi'
+          cluster-name: 'dev_reviewsapi_ecs_cluster'
+          container-image-name-updates: 'prodreviewsapi,tag=${CIRCLE_SHA1}'
+    verify-deployment:
+    steps:
       - run:
           name: Get last task definition
           command: >
@@ -39,25 +32,32 @@ jobs:
           family: 'prodreviewsapi'
           cluster-name: 'dev_reviewsapi_ecs_cluster'
           task-definition-arn: '${TASK_DEFINITION_ARN}'
-
+  
 workflows:
-  build_and_push_image:
+  build-mage:
     jobs:
       - aws-ecr/build-and-push-image:
-      - aws-ecs/deploy-service-update:
-          requires:
-            - aws-ecr/build-and-push-image
-          filter:
-            branches:
-              only: 
-                - master
-  verify-deployment:
+          account-url: ECR_ACCOUNT_URL
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          region: AWS_DEFAULT_REGION
+          repo: ECR_ENDPOINT
+          tag: '${CIRCLE_SHA1}'
+            filter:
+              branches:
+                only: 
+                  - master
+  push-image:
     jobs:
-      - run
-      - aws-ecs/verify-revision-is-deployed
-          requires:
-            - run
+      - update-tag
           filter:
-            branches:
-              only: 
-                - master
+              branches:
+                only: 
+                  - master
+  verify:
+    jobs:
+      - verify-deployment
+          filter:
+              branches:
+                only: 
+                  - master
