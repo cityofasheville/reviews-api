@@ -43,10 +43,7 @@ workflows:
           region: AWS_DEFAULT_REGION
           repo: ECR_ENDPOINT
           tag: '${CIRCLE_SHA1}'
-            filter:
-              branches:
-                only: 
-                  - master
+
   push-image:
     jobs:
       - update-tag
