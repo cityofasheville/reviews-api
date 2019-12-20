@@ -12,7 +12,7 @@ workflows:
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           region: AWS_DEFAULT_REGION
           repo: 'coa-reviewsapi'
-          extra-build-args: 'sessionName=${SESSION_NAME} sessionSecret=${SESSION_SECRET} maxSessionDays=${MAX_SESSION_DAYS} cache_method=${CACHE_METHOD} region=${AWS_DEFAULT_REGION} userpoolId=${USER_POOL_ID} appClientId=${APP_CLIENT_ID} cognitoOauthUrl=${COGNITO_OAUTH_URL} mds_host=${MDS_HOST} mds_user=${MDS_USER} mds_password=&{MDS_PASSWORD} mds_database=${MDS_DATABASE} reviews_host=${REVIEWS_HOST} reviews_user=${REVIEWS_USER} reviews_password=${REVIEWS_PASSWORD} reviews_database=${REVIEWS_DATABASE}'
+          extra-build-args: 'sessionName=${SESSION_NAME} sessionSecret=${SESSION_SECRET} maxSessionDays=${MAX_SESSION_DAYS} cache_method=${CACHE_METHOD} region=${AWS_DEFAULT_REGION} userpoolId=${USER_POOL_ID} appClientId=${APP_CLIENT_ID} cognitoOauthUrl=${COGNITO_OAUTH_URL} mds_host=${MDS_HOST} mds_user=${MDS_USER} mds_password=${MDS_PASSWORD} mds_database=${MDS_DATABASE} reviews_host=${REVIEWS_HOST} reviews_user=${REVIEWS_USER} reviews_password=${REVIEWS_PASSWORD} reviews_database=${REVIEWS_DATABASE}'
           tag: '${CIRCLE_SHA1}'
           filters:
             branches:
