@@ -3,16 +3,16 @@ FROM node:10
 
 # Folder where the app will be copied to
 # will by the target of the docker file commands
-WORKDIR ~/repo
+WORKDIR /opt
 
 # Copy package.json + package-lock.json files
-COPY package*.json ./
+COPY ../../package*.json ./
 
 # Installing dependencies
 RUN npm install
 
 # Bundle app source
-COPY . .
+COPY ../../ .
 
 # Exposes port 4000
 EXPOSE 4000
