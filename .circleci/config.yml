@@ -47,14 +47,8 @@ workflows:
   push-image:
     jobs:
       - update-tag
-          filter:
-            branches:
-              only: 
-                - master
+         
   verify:
     jobs:
       - verify-deployment
-          filter:
-            branches:
-              only: 
-                - master
+       
