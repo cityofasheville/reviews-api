@@ -42,8 +42,8 @@ jobs:
           name: Push application Docker image
           command: |
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              login="$(aws ecr get-login)"
+              login="$(aws ecr get-login --region us-east-1 --no-include-email)"
               ${login}
-              docker tag coa-reviewsapi "${ECR_ENDPOINT}:latest"
+              docker tag coa-reviewsapi:latest "${ECR_ENDPOINT}:latest"
               docker push "${ECR_ENDPOINT}:latest"
             fi
