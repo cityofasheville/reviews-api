@@ -13,7 +13,7 @@
   "dependencies": {
     "apollo-server": "^2.3.1",
     "apollo-server-express": "^2.3.1",
-    "aws-sdk": "^2.388.0",
+    "aws-sdk": "^2.818.0",
     "axios": "^0.18.1",
     "coa-node-logging": "^3.1.0",
     "coa-web-cache": "^1.2.5",
