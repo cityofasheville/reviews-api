@@ -27,7 +27,7 @@
     "graphql": "^14.6.0",
     "lodash": "^4.17.15",
     "memorystore": "^1.6.0",
-    "mssql": "^4.3.0",
+    "mssql": "^7.2.0",
     "pg": "^8.4.2"
   },
   "peerDependencies": {},
